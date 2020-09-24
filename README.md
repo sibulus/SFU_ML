@@ -1,1 +1,1 @@
-# SFU MSE ML Course LLabs and Tools
+# SFU MSE ML Course Labs and Tools
