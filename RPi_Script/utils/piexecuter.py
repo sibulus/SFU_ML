@@ -112,22 +112,23 @@ class PiExecuter():
             if not command in ["SAVE_MODEL", "LOAD_MODEL"]:
                 print("You need to send or load a default model in the current state of: {}".format(self.execState))
             else:
+                self._currentModelPath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'saved_models')
+
                 if command == "SAVE_MODEL":
                     savedModelStrings = payload.split(" ")
                     savedModel = [int(s) for s in savedModelStrings]
-                    print(savedModel)
+                    # print(savedModel)
                     
-
                     with open("lastModelSaved", "wb") as modelFile:
                         modelFile.write(bytearray(savedModel))
-                    self._currentModelPath = "lastModelSaved"
+                    self._currentModelPath = os.path.join(self._currentModelPath, "lastModelSaved")
                 elif command == "LOAD_MODEL":
-                    self._currentModelPath = payload
+                    self._currentModelPath = os.path.join(self._currentModelPath, payload)
             try:
                 with open(self._currentModelPath, 'rb') as someFile:
                     pass
             except:
-                raise Exception("Problem opening the current model with path ".format(self._currentModelPath))
+                raise Exception("Problem opening the current model with path {} ".format(str(self._currentModelPath)))
 
 
             self.execState = ExecState.ModelLoaded
@@ -139,7 +140,7 @@ class PiExecuter():
 
         elif self.execState == ExecState.Processing:
             if not command in ["PROCESS", "PROCESSING_DONE"]:
-                raise Exception("You need to send a PROCESS or FINISH_PROCESSING command in the current state of: {}".format(self.execState))
+                raise Exception("You need to send a PROCESS or PROCESSING_DONE command in the current state of: {}".format(self.execState))
             else:
                 if command == "PROCESS":
                     if self._currentLab == LabCode.LabTest:

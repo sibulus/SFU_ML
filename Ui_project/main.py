@@ -57,6 +57,7 @@ class MainWindow(QMainWindow):
         self.browseInputButton.clicked.connect(self.handleBrowseInputButton)
         self.browseModelButton.clicked.connect(self.handleBrowseModelButton)
         self.useDefaultModelCheckbox.stateChanged.connect(self.handleUseDefaultModelCheckboxStateChanged)
+        self.useDefaultModelCheckbox.setChecked(True)
 
         #set up the log and progress bar
         self.logTextBrowser = QTextBrowser()

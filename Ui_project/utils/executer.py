@@ -2,14 +2,20 @@ import pandas as pd
 import enum
 import serial
 from utils.utils import lab_names, lab_default_models
+from utils.plotter import Plotter
 from crccheck.crc import Crc16
 from PySide2.QtCore import QTimer, QCoreApplication
+from PySide2.QtWidgets import QDialog
 from datetime import datetime
 import os
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 SERIAL_COMMAND_TIMEOUT = 1000 #in ms
 SERIAL_COMMAND_MAX_TRIALS = 3 #in number of trials
+
+# LOAD_MODEL is currently not used but is kept in case of implementing re-use of currently saved models in the future
+# SAVE_MODEL currently saves and loads the saved model on the 
 SERIAL_COMMANDS = ["RESET", "SELECT_LAB", "SAVE_MODEL", "LOAD_MODEL", "PROCESS", "PROCESSING_DONE"]
 STARTING_BYTE = 0x01
 
@@ -18,7 +24,6 @@ SUCCESS_CODE = 0
 
 class StopProcessingRequested(Exception):
     pass
-
 
 class ExecutionResult(enum.Enum):
     COMPLETED = 0
@@ -64,7 +69,8 @@ class Executer:
     def execute(self, labCode, inputDataFrame, outputFolder, inputFields=None, progressBar=None, model=None):
         # self.logger.disableLogging()
         startTime = time.time()
-        if progressBar != None:
+        # progressBar = None
+        if progressBar is not None:
             progressBar.setValue(0)
         try:
             if self.execState == ExecState.NotConnected:
@@ -104,14 +110,25 @@ class Executer:
 
             if self.execState == ExecState.Processing:
                 if labCode == "LabTest":
-                    if self._executeLabTest(inputs, outputFolder, progressBar=progressBar) == FAILURE_CODE:
-                        return ExecutionResult.FAILED
-                    else:
-                        self.execState = ExecState.Done
+                    executionResult = self._executeLab(inputs, outputFolder, outputHeader = "out1, out2",
+                        progressBar=progressBar, plotter=Plotter())
+                elif labCode == "Lab1":
+                    executionResult = self._executeLab(inputs, outputFolder, outputHeader = "TBD",
+                        progressBar=progressBar, plotter=None)
+                elif labCode == "Lab2":
+                    executionResult = self._executeLab(inputs, outputFolder, outputHeader = "TBD",
+                        progressBar=progressBar, plotter=None)
+                else:
+                    raise ValueError("Lab Code should be one of the implemented lab codes for processing to work")
+                    return ExecutionResult.FAILED
+                if executionResult == FAILURE_CODE:
+                    return ExecutionResult.FAILED
+                else:
+                    self.execState = ExecState.Done
 
             if self.execState == ExecState.Done:
                 if (self._sendCommand("PROCESSING_DONE", "None") != FAILURE_CODE):
-                    if progressBar != None:
+                    if progressBar is not None:
                         progressBar.setValue(100)
                     # self.logger.enableLogging()
                     self.log("Processing completed in {} ms".format((time.time()-startTime)*1000))
@@ -119,9 +136,9 @@ class Executer:
                 else:
                     self.log("Failed to let RPi know that processing is done", "ERROR")
                     return ExecutionResult.FAILED
-                #TODO: Continue the Implementation
+
         except StopProcessingRequested:
-            if progressBar != None:
+            if progressBar is not None:
                 progressBar.setValue(0)
             return ExecutionResult.INTERRUPTED
         except Exception as e:
@@ -138,14 +155,16 @@ class Executer:
         else:
             return ExecutionResult.COMPLETED
 
-    def _executeLabTest(self, inputs, outputFolder, progressBar=None):
-        if progressBar != None:
+    def _executeLab(self, inputs, outputFolder, outputHeader= None, progressBar= None, plotter= None):
+        if progressBar is not None:
             progressBarIncrements = 100/len(inputs.index)
             currentProgressBarValue = progressBar.value()
+
         outputFilePath = os.path.join(outputFolder, datetime.now().strftime("%d-%m_%H-%M-%S")+"_OutputsOnly.csv")
 
         with open(outputFilePath, 'a') as outFile:
-            outFile.write("out1, out2") #the outputs labels are hardcoded as part of the lab
+            if outputHeader is not None:
+                outFile.write(outputHeader)
             for i in range(len(inputs.index)):
                 inputStringParts = [str(n) for n in inputs.iloc[i].values.tolist()]
                 inputString = ", ".join(inputStringParts)
@@ -157,18 +176,12 @@ class Executer:
                 else:                
                     self.log("Output is: {}".format(result), type="SUCCESS")
                     outFile.write(result+"\n")
-                if progressBar != None:
+                if plotter is not None:
+                    plotter.addNewData(inputs.iloc[i, 0], float(result.rstrip(' \t\r\n\0').split(',')[0]))
+                if progressBar is not None:
                     currentProgressBarValue += progressBarIncrements
                     progressBar.setValue(currentProgressBarValue)
             return SUCCESS_CODE
-
-
-
-    def _executeLab1(self):
-        pass
-
-    def _executeLab2(self):
-        pass
 
     def _sendCommand(self, command, payload):
         if not command in SERIAL_COMMANDS:
@@ -186,11 +199,11 @@ class Executer:
         sendBuffer.extend(checksumBytes)
         
         for trial_number in range(SERIAL_COMMAND_MAX_TRIALS):
-            # t = time.time()
+            t = time.time()
             self.serialPort.write(sendBuffer)
             self.serialTimeoutTimer.start()
             succeeded, string = self.getSerialAck()
-            # print("The time spent from sending a command to receiving a reply is ",time.time()-t)
+            print("The time spent from sending a command to receiving a reply is ",time.time()-t)
             if (succeeded):
                 return string
         return FAILURE_CODE
@@ -202,7 +215,6 @@ class Executer:
 
         return self._sendCommand("SAVE_MODEL", fileToBeSentStr)
         
-
     def getSerialAck(self):
         string = ""
         succeeded = False
@@ -258,9 +270,8 @@ class Executer:
                     if string == "None":
                         string = ""
                 else:
-                    self.log("Acknowledgment Failed, received: {}".format(currentSerialString.encode('utf-8').rstrip("\t\r\n\0")), type="ERROR")
+                    self.log("Acknowledgment Failed, received: {}".format(currentSerialString.rstrip("\t\r\n\0")), type="ERROR")
                 break
-
 
         return succeeded, string
 

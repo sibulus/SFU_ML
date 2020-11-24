@@ -40,6 +40,9 @@
           <property name="text">
            <string>Choose Model</string>
           </property>
+          <property name="buddy">
+           <cstring>modelLineEdit</cstring>
+          </property>
          </widget>
         </item>
         <item row="4" column="0">
@@ -259,11 +262,16 @@
  </widget>
  <tabstops>
   <tabstop>labNameComboBox</tabstop>
+  <tabstop>modelLineEdit</tabstop>
+  <tabstop>useDefaultModelCheckbox</tabstop>
+  <tabstop>browseModelButton</tabstop>
   <tabstop>inputLineEdit</tabstop>
   <tabstop>browseInputButton</tabstop>
   <tabstop>outputFolderLineEdit</tabstop>
   <tabstop>browseOutputButton</tabstop>
   <tabstop>serialPortComboBox</tabstop>
+  <tabstop>connectDisconnectSerialButton</tabstop>
+  <tabstop>refreshSerialPortsButton</tabstop>
   <tabstop>startStopButton</tabstop>
   <tabstop>clearLogButton</tabstop>
   <tabstop>saveLogButton</tabstop>
