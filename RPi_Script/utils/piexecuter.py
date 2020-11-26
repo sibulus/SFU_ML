@@ -166,6 +166,12 @@ class PiExecuter():
         print("The Acknowledgment Payload is:"+outputPayload)
         return outputPayload
 
+    def processLab1(self, payload):
+        with open(_currentModelPath, 'rb') as f:
+            model = _currentModelPath.load(f)
+            y_pred = model.predict([float(i) for i in payload.split(',')]).astype('int64')
+            return y_pred
+
     def sendSerialAck(self, result=None):
         outBuffer = bytearray()
         outBuffer.append(STARTING_BYTE)
