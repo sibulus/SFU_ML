@@ -12,6 +12,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 
 SERIAL_COMMAND_TIMEOUT = 1000 #in ms
+SAVE_MODEL_COMMAND_TIMEOUT = 120000 #in ms
 SERIAL_COMMAND_MAX_TRIALS = 3 #in number of trials
 
 # LOAD_MODEL is currently not used but is kept in case of implementing re-use of currently saved models in the future
@@ -56,7 +57,6 @@ class Executer:
 
         self.serialTimeoutTimer = QTimer()
         self.serialTimeoutTimer.setSingleShot(True)
-        self.serialTimeoutTimer.setInterval(SERIAL_COMMAND_TIMEOUT)
 
         # self.checkStopRequestTimer = QTimer()
         # self.checkStopRequestTimer.setInterval(500)
@@ -68,6 +68,8 @@ class Executer:
 
     def execute(self, labCode, inputDataFrame, outputFolder, inputFields=None, progressBar=None, model=None):
         # self.logger.disableLogging()
+
+        self.serialPort.flushInput()
         startTime = time.time()
         # progressBar = None
         if progressBar is not None:
@@ -90,6 +92,7 @@ class Executer:
     
             if self.execState == ExecState.LabSelected:
                 if model is not None:
+                    self.log("Started sending the model, this could take a while, please wait", type="INFO")
                     if self._sendSaveModelCommand(model) == FAILURE_CODE:
                         self.log("Failed to send the selected model", type="ERROR")
                         return ExecutionResult.FAILED
@@ -111,7 +114,7 @@ class Executer:
             if self.execState == ExecState.Processing:
                 if labCode == "LabTest":
                     executionResult = self._executeLab(inputs, outputFolder, outputHeader = "out1, out2",
-                        progressBar=progressBar, plotter=Plotter())
+                        progressBar=progressBar, plotter=None)
                 elif labCode == "Lab1":
                     executionResult = self._executeLab(inputs, outputFolder, outputHeader = "TBD",
                         progressBar=progressBar, plotter=None)
@@ -144,6 +147,7 @@ class Executer:
         except Exception as e:
             self.logger.enableLogging()
             self.log("Caught exception: {}".format(e), type="ERROR")
+            raise
             return ExecutionResult.FAILED
 
     def reset(self):
@@ -183,7 +187,7 @@ class Executer:
                     progressBar.setValue(currentProgressBarValue)
             return SUCCESS_CODE
 
-    def _sendCommand(self, command, payload):
+    def _sendCommand(self, command, payload, timeout=SERIAL_COMMAND_TIMEOUT):
         if not command in SERIAL_COMMANDS:
             print("The command provided {} is not a valid serial command".format(command))
             return FAILURE_CODE
@@ -197,10 +201,11 @@ class Executer:
         newChecksum.process(sendBuffer[1:])
         checksumBytes = newChecksum.finalbytes()
         sendBuffer.extend(checksumBytes)
-        
+        print(len(sendBuffer))
         for trial_number in range(SERIAL_COMMAND_MAX_TRIALS):
             t = time.time()
             self.serialPort.write(sendBuffer)
+            self.serialTimeoutTimer.setInterval(timeout)
             self.serialTimeoutTimer.start()
             succeeded, string = self.getSerialAck()
             print("The time spent from sending a command to receiving a reply is ",time.time()-t)
@@ -213,7 +218,7 @@ class Executer:
             fileToBeSent = modelFile.read()
         fileToBeSentStr = " ".join(map(str,fileToBeSent))
 
-        return self._sendCommand("SAVE_MODEL", fileToBeSentStr)
+        return self._sendCommand("SAVE_MODEL", fileToBeSentStr, timeout=SAVE_MODEL_COMMAND_TIMEOUT)
         
     def getSerialAck(self):
         string = ""

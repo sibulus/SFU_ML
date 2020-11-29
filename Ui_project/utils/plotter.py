@@ -28,6 +28,7 @@ class Plotter(FigureCanvasQTAgg):
         self.xdata = list(range(MAXIMUM_POINTS))
         self.ydata = [0] * MAXIMUM_POINTS
 
+        #The following lines may not be correct
         self.xtitle = xtitle
         self.ytitle = ytitle
         self.xtitle("SAMPLE X")

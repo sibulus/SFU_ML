@@ -2,6 +2,10 @@ import serial
 import enum
 from crccheck.crc import Crc16
 import os
+import pickle
+from sklearn.tree import DecisionTreeRegressor
+import numpy as np
+
 STARTING_BYTE = 0x01
 
 class SerialState(enum.Enum):
@@ -56,6 +60,7 @@ class PiExecuter():
                         if newBytes[-1] == 0x00:
                             self.serialState = SerialState.WaitingForChecksum1
                         break
+            print(len(self._currentSerialString))
             
         if self.serialState == SerialState.WaitingForChecksum1:
             newByte = self.port.read()
@@ -98,38 +103,36 @@ class PiExecuter():
             self.serialState = SerialState.WaitingToStart
     
         elif self.execState == ExecState.NotConnected:
-            print("Wrong Exec State reached somehow: {}".format(self.execState))
+            Exception("Wrong Exec State reached somehow: {}".format(self.execState))
             return
 
         elif self.execState == ExecState.Connected:
             if command != "SELECT_LAB":
-                print("You need to select the lab in the current state of: {}".format(self.execState))
+                Exception("You need to select the lab in the current state of: {}".format(self.execState))
             else:
                 self._currentLab = LabCode[payload]
                 self.execState = ExecState.LabSelected
 
         elif self.execState == ExecState.LabSelected:
             if not command in ["SAVE_MODEL", "LOAD_MODEL"]:
-                print("You need to send or load a default model in the current state of: {}".format(self.execState))
+                Exception("You need to send or load a default model in the current state of: {}".format(self.execState))
             else:
-                self._currentModelPath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'saved_models')
-
-                if command == "SAVE_MODEL":
-                    savedModelStrings = payload.split(" ")
-                    savedModel = [int(s) for s in savedModelStrings]
-                    # print(savedModel)
+                if self._currentLab != LabCode.LabTest:
+                    self._currentModelPath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'saved_models')
+                    if command == "SAVE_MODEL":
+                        savedModelStrings = payload.split(" ")
+                        savedModel = [int(s) for s in savedModelStrings]
+                        # print(savedModel)
+                        self._currentModelPath = os.path.join(self._currentModelPath, "lastModelSaved")
+                        with open(self._currentModelPath, "wb") as modelFile:
+                            modelFile.write(bytearray(savedModel))
+                    elif command == "LOAD_MODEL":
+                        self._currentModelPath = os.path.join(self._currentModelPath, payload)
                     
-                    with open("lastModelSaved", "wb") as modelFile:
-                        modelFile.write(bytearray(savedModel))
-                    self._currentModelPath = os.path.join(self._currentModelPath, "lastModelSaved")
-                elif command == "LOAD_MODEL":
-                    self._currentModelPath = os.path.join(self._currentModelPath, payload)
-            try:
-                with open(self._currentModelPath, 'rb') as someFile:
-                    pass
-            except:
-                raise Exception("Problem opening the current model with path {} ".format(str(self._currentModelPath)))
-
+                    try:
+                        self._loadedModel = pickle.load(open(self._currentModelPath, 'rb'))
+                    except:
+                        raise Exception("Problem opening the current model with path {} ".format(str(self._currentModelPath)))
 
             self.execState = ExecState.ModelLoaded
             self.execState = ExecState.Processing
@@ -167,10 +170,12 @@ class PiExecuter():
         return outputPayload
 
     def processLab1(self, payload):
-        with open(_currentModelPath, 'rb') as f:
-            model = _currentModelPath.load(f)
-            y_pred = model.predict([float(i) for i in payload.split(',')]).astype('int64')
-            return y_pred
+        print("Went into process lab 1")
+        input_list = [float(i) for i in payload.split(',')]
+        y_pred = self._loadedModel.predict(np.array(input_list).reshape(1, -1)).astype('int64')
+        outputPayload = ', '.join([str(i) for i in list(y_pred.flatten())])
+        print("The Acknowledgment Payload is:"+outputPayload)
+        return outputPayload
 
     def sendSerialAck(self, result=None):
         outBuffer = bytearray()

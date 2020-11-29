@@ -13,8 +13,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 """
 
 lab_names = {"LabTest":"Sample Communication Test", "Lab1": "Some Random Method 1", "Lab2":"Some Random Method 2"}
-lab_model_extensions = {"LabTest": "*.*", "Lab1": "*.pk", "Lab2":"*.sre"}
-lab_default_models = {"LabTest": "labtestDefaultModel", "Lab1": "*lab1DefaultModel.pk", "Lab2":"lab2DefaultModel.sre"}
+lab_model_extensions = {"LabTest": "*.*", "Lab1": "*.pkl", "Lab2":"*.sre"}
+lab_default_models = {"LabTest": "labtestDefaultModel", "Lab1": "lab1Default", "Lab2":"lab2DefaultModel.sre"}
 
 def find_serial_ports():
     """ Lists serial port names

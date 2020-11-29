@@ -1,9 +1,9 @@
 import sys
 from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, QComboBox, QPushButton, QLabel,\
                                 QLineEdit, QTextBrowser, QProgressBar, QAction, QDialog, QFileDialog, \
-                                    QMessageBox, QVBoxLayout, QCheckBox, QDialogButtonBox
+                                    QMessageBox, QVBoxLayout, QCheckBox, QDialogButtonBox, QScrollArea
 from PySide2.QtUiTools import QUiLoader #to load UI directly
-from PySide2.QtCore import QFile, QIODevice
+from PySide2.QtCore import QFile, QIODevice, Qt
 from PySide2.QtGui import QIcon
 from ui_mainwindow import Ui_MainWindow
 from utils.logger import Logger
@@ -123,6 +123,7 @@ class MainWindow(QMainWindow):
             try:
                 currentPortName = self.serialPortComboBox.currentText()
                 self.port = serial.Serial(currentPortName, 115200 , timeout=1, bytesize=8, parity='N', stopbits=1)
+                self.port.set_buffer_size(rx_size = 10**3, tx_size = 10**8)
                 self.serialPortComboBox.setItemText(self.serialPortComboBox.currentIndex(), currentPortName + " (CONNECTED)")
                 self.connectDisconnectSerialButton.setText("Disconnect")
                 self.b_serialConnected = True
@@ -164,13 +165,21 @@ class MainWindow(QMainWindow):
 
         #Display a dialog to ask the user to choose what inputs they want
         dialog = QDialog(self)
+
         dialog.setWindowTitle("Select the Input Fields")
         dialogButtons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        dialogButtons.button(QDialogButtonBox.Ok).setDisabled(1)
+        dialogButtons.button(QDialogButtonBox.Ok).setDisabled(0)
         dialogButtons.accepted.connect(dialog.accept)
         dialogButtons.rejected.connect(dialog.reject)
-        layout = QVBoxLayout()
-        layout.addWidget(QLabel(text="Please select the input fields from the following:"))
+        
+        mainLayout = QVBoxLayout(dialog)
+        scroll = QScrollArea(dialog)
+        scroll.setWidgetResizable(True)
+        layoutWidget = QWidget()
+        layout = QVBoxLayout(layoutWidget)
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        scroll.setWidget(layoutWidget)
+
         chosenInputs=[]
         checkboxes=[]
 
@@ -183,10 +192,15 @@ class MainWindow(QMainWindow):
         for input in possibleInputs:
             checkbox = QCheckBox(text=input)
             checkbox.clicked.connect(handleCheckboxClicked)
+            checkbox.setChecked(True)
             checkboxes.append(checkbox)
             layout.addWidget(checkbox)
-        layout.addWidget(dialogButtons)
-        dialog.setLayout(layout)
+
+        mainLayout.addWidget(QLabel(text="Please select the input fields from the following:"))
+        mainLayout.addWidget(scroll)
+        mainLayout.addWidget(dialogButtons)
+        dialog.setLayout(mainLayout)
+        # dialog.setFixedHeight(400)
         if dialog.exec_() == QDialog.Accepted:
             for checkbox in checkboxes:
                 if checkbox.isChecked():
@@ -338,7 +352,9 @@ if __name__ == "__main__":
     mainWindow.show()
 
     #FOR TESTING PURPOSES
-    mainWindow.inputLineEdit.setText('C:/Users/ramye/OneDrive/Desktop/sampleInput.csv')
+    mainWindow.useDefaultModelCheckbox.setChecked(False)
+    mainWindow.modelLineEdit.setText('C:/Users/ramye/OneDrive - sfu.ca/My XPS/ML Course Dev/work/SFU_ML/LAB_1/dt_pickle_model.pkl')
+    mainWindow.inputLineEdit.setText('C:/Users/ramye/OneDrive - sfu.ca/My XPS/ML Course Dev/work/SFU_ML/LAB_1/test_data.csv')
     mainWindow.outputFolderLineEdit.setText('C:/Users/ramye/OneDrive/Desktop/random11')
 
 
