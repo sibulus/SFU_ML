@@ -16,12 +16,12 @@ if __name__ == "__main__":
     #if this is running on the target RPi
     if sys.platform.startswith('linux'):
         blockPrint()
-        portName = "/dev/ttySSG0"
+        portName = "/dev/ttyGS0"
     else:
         portName = "COM2"
 
     serialPort = serial.Serial(portName, 115200 , timeout=1, bytesize=8, parity='N', stopbits=1)
-    serialPort.set_buffer_size(rx_size = 10**8, tx_size = 10**3)
+    # serialPort.set_buffer_size(rx_size = 10**8, tx_size = 10**3)
 
     while(1):
         if (not serialPort.isOpen()):
@@ -38,4 +38,3 @@ if __name__ == "__main__":
             serialPort.write(0x55)
             serialPort.write(0x55)
             print(str(err)) 
-            del(executer)           
