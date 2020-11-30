@@ -33,7 +33,14 @@
          </widget>
         </item>
         <item row="2" column="1" colspan="2">
-         <widget class="QLineEdit" name="inputLineEdit"/>
+         <widget class="QLineEdit" name="inputLineEdit">
+          <property name="toolTip">
+           <string/>
+          </property>
+          <property name="whatsThis">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select the CSV file containing the &lt;span style=&quot; font-weight:600;&quot;&gt;Test Data&lt;/span&gt;, the first row of the file should be the header&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+         </widget>
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="chooseModelLabel">

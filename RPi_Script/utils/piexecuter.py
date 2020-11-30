@@ -4,7 +4,9 @@ from crccheck.crc import Crc16
 import os
 import pickle
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.neighbors import KNeighborsRegressor
 import numpy as np
+import zlib
 
 STARTING_BYTE = 0x01
 
@@ -121,7 +123,8 @@ class PiExecuter():
                     self._currentModelPath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'saved_models')
                     if command == "SAVE_MODEL":
                         savedModelStrings = payload.split(" ")
-                        savedModel = [int(s) for s in savedModelStrings]
+                        savedModel = bytearray([int(s) for s in savedModelStrings])
+                        savedModel = zlib.decompress(savedModel)
                         # print(savedModel)
                         self._currentModelPath = os.path.join(self._currentModelPath, "lastModelSaved")
                         with open(self._currentModelPath, "wb") as modelFile:

@@ -2,7 +2,6 @@ import sys
 from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, QComboBox, QPushButton, QLabel,\
                                 QLineEdit, QTextBrowser, QProgressBar, QAction, QDialog, QFileDialog, \
                                     QMessageBox, QVBoxLayout, QCheckBox, QDialogButtonBox, QScrollArea
-from PySide2.QtUiTools import QUiLoader #to load UI directly
 from PySide2.QtCore import QFile, QIODevice, Qt
 from PySide2.QtGui import QIcon
 from ui_mainwindow import Ui_MainWindow
@@ -12,14 +11,13 @@ from utils import utils
 import pandas as pd
 import serial
 import time
-
 import os
 
 
 class MainWindow(QMainWindow):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(flags=Qt.WindowContextHelpButtonHint|Qt.WindowCloseButtonHint|Qt.CustomizeWindowHint)
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -86,7 +84,7 @@ class MainWindow(QMainWindow):
         self.setupSerial()
         self.refreshSerialPorts()
         
-        self.logger.log("Finished building the main window", type="INFO")
+        self.logger.log("The application is ready!", type="INFO")
 
     def setUpIcon(self):
         self.appIcon = QIcon("images/favicon.png")
@@ -122,7 +120,7 @@ class MainWindow(QMainWindow):
         if not self.b_serialConnected:
             try:
                 currentPortName = self.serialPortComboBox.currentText()
-                self.port = serial.Serial(currentPortName, 115200 , timeout=1, bytesize=8, parity='N', stopbits=1)
+                self.port = serial.Serial(currentPortName, 115200 , timeout=1, write_timeout=240, bytesize=8, parity='N', stopbits=1)
                 self.port.set_buffer_size(rx_size = 10**3, tx_size = 10**8)
                 self.serialPortComboBox.setItemText(self.serialPortComboBox.currentIndex(), currentPortName + " (CONNECTED)")
                 self.connectDisconnectSerialButton.setText("Disconnect")
@@ -348,7 +346,7 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     mainWindow = MainWindow()
-
+    mainWindow.setFixedSize(mainWindow.size())
     mainWindow.show()
 
     #FOR TESTING PURPOSES

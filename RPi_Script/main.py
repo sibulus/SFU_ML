@@ -1,6 +1,7 @@
 import serial
 from utils.piexecuter import PiExecuter, STARTING_BYTE
 import sys, os
+import traceback
 
 # Disable
 def blockPrint():
@@ -20,7 +21,7 @@ if __name__ == "__main__":
     else:
         portName = "COM2"
 
-    serialPort = serial.Serial(portName, 115200 , timeout=1, bytesize=8, parity='N', stopbits=1)
+    serialPort = serial.Serial(portName, 115200 , timeout=1, write_timeout=1, bytesize=8, parity='N', stopbits=1)
     # serialPort.set_buffer_size(rx_size = 10**8, tx_size = 10**3)
 
     while(1):
@@ -34,7 +35,7 @@ if __name__ == "__main__":
         except Exception as err:
             startBytes = bytes([STARTING_BYTE]*50)
             serialPort.write(startBytes)
-            serialPort.write(("EXCEPTION: "+str(err)).encode("utf-8"))
-            serialPort.write(0x55)
-            serialPort.write(0x55)
-            print(str(err)) 
+            serialPort.write(("EXCEPTION: "+ str(err) + " TRACEBACK: "+ traceback.format_exc()).encode("utf-8"))
+            print(str(err), traceback.format_exc())
+            if executer:
+                del(executer)

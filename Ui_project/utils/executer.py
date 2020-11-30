@@ -10,9 +10,11 @@ from datetime import datetime
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor
+import traceback
+import zlib
 
 SERIAL_COMMAND_TIMEOUT = 1000 #in ms
-SAVE_MODEL_COMMAND_TIMEOUT = 120000 #in ms
+SAVE_MODEL_COMMAND_TIMEOUT = 240000 #in ms
 SERIAL_COMMAND_MAX_TRIALS = 3 #in number of trials
 
 # LOAD_MODEL is currently not used but is kept in case of implementing re-use of currently saved models in the future
@@ -57,6 +59,7 @@ class Executer:
 
         self.serialTimeoutTimer = QTimer()
         self.serialTimeoutTimer.setSingleShot(True)
+        self.serialTimeoutTimer.setInterval(SERIAL_COMMAND_TIMEOUT)
 
         # self.checkStopRequestTimer = QTimer()
         # self.checkStopRequestTimer.setInterval(500)
@@ -70,6 +73,7 @@ class Executer:
         # self.logger.disableLogging()
 
         self.serialPort.flushInput()
+        self.serialPort.flushOutput()
         startTime = time.time()
         # progressBar = None
         if progressBar is not None:
@@ -113,10 +117,10 @@ class Executer:
 
             if self.execState == ExecState.Processing:
                 if labCode == "LabTest":
-                    executionResult = self._executeLab(inputs, outputFolder, outputHeader = "out1, out2",
+                    executionResult = self._executeLab(inputs, outputFolder,
                         progressBar=progressBar, plotter=None)
                 elif labCode == "Lab1":
-                    executionResult = self._executeLab(inputs, outputFolder, outputHeader = "TBD",
+                    executionResult = self._executeLab(inputs, outputFolder, outputHeader = "Predicted Sale Price",
                         progressBar=progressBar, plotter=None)
                 elif labCode == "Lab2":
                     executionResult = self._executeLab(inputs, outputFolder, outputHeader = "TBD",
@@ -147,7 +151,8 @@ class Executer:
         except Exception as e:
             self.logger.enableLogging()
             self.log("Caught exception: {}".format(e), type="ERROR")
-            raise
+            self.log(traceback.format_exc())
+            print(traceback.format_stack())
             return ExecutionResult.FAILED
 
     def reset(self):
@@ -168,7 +173,7 @@ class Executer:
 
         with open(outputFilePath, 'a') as outFile:
             if outputHeader is not None:
-                outFile.write(outputHeader)
+                outFile.write(outputHeader+"\n")
             for i in range(len(inputs.index)):
                 inputStringParts = [str(n) for n in inputs.iloc[i].values.tolist()]
                 inputString = ", ".join(inputStringParts)
@@ -216,8 +221,9 @@ class Executer:
     def _sendSaveModelCommand(self, model):
         with open(model, 'rb') as modelFile:
             fileToBeSent = modelFile.read()
+        fileToBeSent = zlib.compress(fileToBeSent, level=9)
         fileToBeSentStr = " ".join(map(str,fileToBeSent))
-
+        self.log(f"Estimated time for model to be received is {int(len(fileToBeSentStr)/2000)} seconds", type="INFO")
         return self._sendCommand("SAVE_MODEL", fileToBeSentStr, timeout=SAVE_MODEL_COMMAND_TIMEOUT)
         
     def getSerialAck(self):
@@ -228,7 +234,7 @@ class Executer:
         currentSerialString = ""
         currentCheckSum = bytearray(2)
 
-        while(self.serialTimeoutTimer.remainingTime()):
+        while(self.serialTimeoutTimer.remainingTime()>0):
             QCoreApplication.processEvents()
             self.processCheckStopRequest()
             if self.serialState == SerialState.WaitingToStart:
@@ -296,7 +302,7 @@ class Executer:
 
     @execState.setter
     def execState(self, newVal):
-        # print("Switched to Exec State: {}".format(newVal))
+        print("Switched to Exec State: {}".format(newVal))
         self._execState = newVal
 
     @property
@@ -305,6 +311,6 @@ class Executer:
 
     @serialState.setter
     def serialState(self, newVal):
-        # print("Switched to Serial State: {}".format(newVal))
+        print("Switched to Serial State: {}".format(newVal))
         self._serialState = newVal
 
