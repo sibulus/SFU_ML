@@ -248,7 +248,7 @@ class MainWindow(QMainWindow):
         helpBox.setWindowTitle("Need Help?")
         helpBox.setText("For Help, please reach out to your Instructor or TA or read the lab manual")
         helpBox.setTextFormat(Qt.RichText)
-        helpBox.setInformativeText(f"You can access the project <a href=\"{utils.docs_link}\">Documentation</a> source in the <a href=\"{utils.repo_link}\">Github Repo!</a>")
+        helpBox.setInformativeText(f"You can access the project <a href=\"{utils.docs_link}\">Documentation</a> and source in the <a href=\"{utils.repo_link}\">Github Repo!</a>")
         helpBox.setWindowIcon(self.appIcon)
         helpBox.exec_()
 
