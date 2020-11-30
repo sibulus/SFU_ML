@@ -97,6 +97,7 @@ class MainWindow(QMainWindow):
         self.labNameComboBox = self.findChild(QComboBox, "labNameComboBox")
         for code, name in utils.lab_names.items():
             self.labNameComboBox.addItem(code+": "+name)
+        self.labNameComboBox.setCurrentIndex(1)
 
     def setupSerial(self):
         self.refreshSerialPortsButton = QPushButton()
@@ -245,8 +246,9 @@ class MainWindow(QMainWindow):
         helpBox.setIcon(QMessageBox.Information)
         helpBox.setStandardButtons(QMessageBox.Ok)
         helpBox.setWindowTitle("Need Help?")
-        helpBox.setText("For Help, please reach out to your Instructor or TA or read your lab manual")
-        helpBox.setInformativeText("You can access the project documentation in the Github Repo")
+        helpBox.setText("For Help, please reach out to your Instructor or TA or read the lab manual")
+        helpBox.setTextFormat(Qt.RichText)
+        helpBox.setInformativeText(f"You can access the project <a href=\"{utils.docs_link}\">Documentation</a> source in the <a href=\"{utils.repo_link}\">Github Repo!</a>")
         helpBox.setWindowIcon(self.appIcon)
         helpBox.exec_()
 
@@ -354,6 +356,5 @@ if __name__ == "__main__":
     mainWindow.modelLineEdit.setText('C:/Users/ramye/OneDrive - sfu.ca/My XPS/ML Course Dev/work/SFU_ML/LAB_1/dt_pickle_model.pkl')
     mainWindow.inputLineEdit.setText('C:/Users/ramye/OneDrive - sfu.ca/My XPS/ML Course Dev/work/SFU_ML/LAB_1/test_data.csv')
     mainWindow.outputFolderLineEdit.setText('C:/Users/ramye/OneDrive/Desktop/random11')
-
 
     sys.exit(app.exec_())

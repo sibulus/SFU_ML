@@ -178,6 +178,9 @@ class PiExecuter():
         y_pred = self._loadedModel.predict(np.array(input_list).reshape(1, -1)).astype('int64')
         outputPayload = ', '.join([str(i) for i in list(y_pred.flatten())])
         print("The Acknowledgment Payload is:"+outputPayload)
+        if outputPayload == "":
+            raise Exception("Problem with getting a prediction for the input data, \
+please check the provided model and restart both the application and Raspberry Pi")
         return outputPayload
 
     def sendSerialAck(self, result=None):

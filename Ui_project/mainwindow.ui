@@ -94,6 +94,9 @@
           <property name="enabled">
            <bool>true</bool>
           </property>
+          <property name="whatsThis">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select the lab you want to do the processing for. You can also use LabTest to test communication with the Raspberry Pi (RPi)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
          </widget>
         </item>
         <item row="4" column="1">
@@ -115,6 +118,9 @@
           <property name="enabled">
            <bool>true</bool>
           </property>
+          <property name="whatsThis">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select a folder where the output files will be saved&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
          </widget>
         </item>
         <item row="3" column="3">
@@ -132,10 +138,17 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QLineEdit" name="modelLineEdit"/>
+         <widget class="QLineEdit" name="modelLineEdit">
+          <property name="whatsThis">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select the model that will be used. Make sure to select the lab first as only the extensions compatible with the lab selected will be available. Note that this application does not check model validity so make sure that the model is compatible with your inputs&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+         </widget>
         </item>
         <item row="1" column="2">
          <widget class="QCheckBox" name="useDefaultModelCheckbox">
+          <property name="whatsThis">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Each lab has a default model that will be already stored on the Raspberry Pi. You can use the default model to test communicaton issues and confirm the validity of your input files.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
           <property name="text">
            <string>Use Default Model</string>
           </property>
@@ -152,6 +165,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="startStopButton">
+        <property name="whatsThis">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When you click this button, the model will be transferred if you are not using the default model and then each line of your input CSV file will be processed and the prediction (inferece) will be received and added to the output CSV file&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="text">
          <string>Start Processing</string>
         </property>

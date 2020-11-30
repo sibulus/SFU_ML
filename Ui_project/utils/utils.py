@@ -11,7 +11,8 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
-
+repo_link = "https://github.com/RamyE/SFU_ML"
+docs_link = "https://github.com/RamyE/SFU_ML"
 lab_names = {"LabTest":"Sample Communication Test", "Lab1": "Regression", "Lab2":"Classification"}
 lab_model_extensions = {"LabTest": "*.*", "Lab1": "*.pkl", "Lab2":"*.pkl"}
 lab_default_models = {"LabTest": "labtestDefaultModel", "Lab1": "lab1Default", "Lab2":"lab2Default"}

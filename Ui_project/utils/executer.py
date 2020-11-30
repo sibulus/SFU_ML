@@ -12,6 +12,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 import traceback
 import zlib
+import copy
 
 SERIAL_COMMAND_TIMEOUT = 1000 #in ms
 SAVE_MODEL_COMMAND_TIMEOUT = 240000 #in ms
@@ -169,11 +170,14 @@ class Executer:
             progressBarIncrements = 100/len(inputs.index)
             currentProgressBarValue = progressBar.value()
 
-        outputFilePath = os.path.join(outputFolder, datetime.now().strftime("%d-%m_%H-%M-%S")+"_OutputsOnly.csv")
+        outputFilePath = os.path.join(outputFolder, datetime.now().strftime("%d-%m_%H-%M-%S"))
 
-        with open(outputFilePath, 'a') as outFile:
+        outputDataFrame = copy.deepcopy(inputs)
+        with open(outputFilePath+"_OutputsOnly.csv", 'a') as outFile:
+            headers = []
             if outputHeader is not None:
                 outFile.write(outputHeader+"\n")
+                headers = outputHeader.split(",")
             for i in range(len(inputs.index)):
                 inputStringParts = [str(n) for n in inputs.iloc[i].values.tolist()]
                 inputString = ", ".join(inputStringParts)
@@ -190,6 +194,16 @@ class Executer:
                 if progressBar is not None:
                     currentProgressBarValue += progressBarIncrements
                     progressBar.setValue(currentProgressBarValue)
+                outputs = [float(i) for i in result.rstrip(' \t\r\n\0').split(',')]
+                for index, output in enumerate(outputs):
+                    if index < len(headers):
+                        header = headers[index]
+                    else:
+                        header = f"Unknown_{index+1}"
+
+                    outputDataFrame.loc[i, header] = output
+            outputDataFrame.to_csv(outputFilePath+"_Full.csv", index=False)
+            self.log(f"Outputs Saved in {outputFilePath+'_OutputsOnly.csv'}\nComplete data saved in {outputFilePath+'_Full.csv'}")
             return SUCCESS_CODE
 
     def _sendCommand(self, command, payload, timeout=SERIAL_COMMAND_TIMEOUT):
@@ -207,13 +221,13 @@ class Executer:
         checksumBytes = newChecksum.finalbytes()
         sendBuffer.extend(checksumBytes)
         print(len(sendBuffer))
-        for trial_number in range(SERIAL_COMMAND_MAX_TRIALS):
+        for _ in range(SERIAL_COMMAND_MAX_TRIALS):
             t = time.time()
             self.serialPort.write(sendBuffer)
             self.serialTimeoutTimer.setInterval(timeout)
             self.serialTimeoutTimer.start()
             succeeded, string = self.getSerialAck()
-            print("The time spent from sending a command to receiving a reply is ",time.time()-t)
+            print("The time spent from sending a command to receiving a reply (or timeouting) is ",time.time()-t)
             if (succeeded):
                 return string
         return FAILURE_CODE
@@ -223,7 +237,7 @@ class Executer:
             fileToBeSent = modelFile.read()
         fileToBeSent = zlib.compress(fileToBeSent, level=9)
         fileToBeSentStr = " ".join(map(str,fileToBeSent))
-        self.log(f"Estimated time for model to be received is {int(len(fileToBeSentStr)/2000)} seconds", type="INFO")
+        self.log(f"Estimated time for model to be sent is {int(len(fileToBeSentStr)/2000)} seconds", type="INFO")
         return self._sendCommand("SAVE_MODEL", fileToBeSentStr, timeout=SAVE_MODEL_COMMAND_TIMEOUT)
         
     def getSerialAck(self):
