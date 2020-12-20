@@ -1,5 +1,6 @@
+# print("This application may takes a minute or more to load, please wait")
 import sys
-from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, QComboBox, QPushButton, QLabel,\
+from PySide2.QtWidgets import QApplication, QGridLayout, QMainWindow, QWidget, QComboBox, QPushButton, QLabel,\
                                 QLineEdit, QTextBrowser, QProgressBar, QAction, QDialog, QFileDialog, \
                                     QMessageBox, QVBoxLayout, QCheckBox, QDialogButtonBox, QScrollArea
 from PySide2.QtCore import QFile, QIODevice, Qt
@@ -13,7 +14,7 @@ import serial
 import time
 import os
 
-
+DISABLE_MODEL_TRASFER = True
 class MainWindow(QMainWindow):
 
     def __init__(self):
@@ -27,9 +28,6 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Lab Tools 1.0 (2021 Edition) - Applications of ML in Mechatronics")
         # set icon
         self.setUpIcon()
-
-        # set up lab names
-        self.setUpLabNames()
         
         #set up the info and start processing button
         self.inputLineEdit = QLineEdit()
@@ -80,6 +78,19 @@ class MainWindow(QMainWindow):
         #initialize member variables
         self._b_processRunning = False
 
+        #disabling model transfer capability if needed
+        self._modelRPiPath = False
+        if DISABLE_MODEL_TRASFER:
+            self.useDefaultModelCheckbox.hide()
+            self.browseModelButton.hide()
+            # self.gridLayout = self.findChild(QGridLayout, "gridLayout")
+            # self.gridLayout.removeWidget(self.browseModelButton)
+            # self.gridLayout.removeWidget(self.useDefaultModelCheckbox)
+            self._modelRPiPath = True
+
+        # set up lab names
+        self.setUpLabNames()
+
         #set up serial comms
         self.setupSerial()
         self.refreshSerialPorts()
@@ -95,6 +106,7 @@ class MainWindow(QMainWindow):
         self.labNameComboBox = QComboBox()
 
         self.labNameComboBox = self.findChild(QComboBox, "labNameComboBox")
+        self.labNameComboBox.currentIndexChanged.connect(self.handleLabNameComboboxCurrentIndexChanged)
         for code, name in utils.lab_names.items():
             self.labNameComboBox.addItem(code+": "+name)
         self.labNameComboBox.setCurrentIndex(1)
@@ -154,6 +166,14 @@ class MainWindow(QMainWindow):
             return
         self.executer = Executer(serialObj=self.port, loggerObj=self.logger)
 
+        if self.modelLineEdit.text() is not "":
+            modelPath = self.modelLineEdit.text()
+        else:
+            modelPath = None
+            if self._modelRPiPath:
+                self.logger.log("Please select a valid model that is already available in the folder saved_models on the RPi", type="ERROR")
+                return
+
         #Read the Input File
         try:
             inputDataFrame = pd.read_csv(self.inputLineEdit.text())
@@ -208,14 +228,11 @@ class MainWindow(QMainWindow):
         else:
             return
 
-        if self.modelLineEdit.text() is not "":
-            modelPath = self.modelLineEdit.text()
-        else:
-            modelPath = None
         self.startStopButton.setText("Stop Processing")
         self.b_processRunning = True
         executionResult = self.executer.execute(self.labNameComboBox.currentText().split(":")[0], inputDataFrame, \
-                                self.outputFolderLineEdit.text(), inputFields=chosenInputs, progressBar=self.progressBar, model=modelPath)
+                                self.outputFolderLineEdit.text(), inputFields=chosenInputs, progressBar=self.progressBar, \
+                                    model=modelPath if not self._modelRPiPath else "RPI:"+modelPath)
         if executionResult == ExecutionResult.COMPLETED:
             self._stopButtonClicked(finishedProcessing = True)
         elif executionResult == ExecutionResult.INTERRUPTED or executionResult == ExecutionResult.FAILED:
@@ -313,6 +330,10 @@ class MainWindow(QMainWindow):
             self.modelLineEdit.setDisabled(1)
             self.browseModelButton.setDisabled(1)
 
+    def handleLabNameComboboxCurrentIndexChanged(self):
+        if self._modelRPiPath:
+            self.modelLineEdit.setText(utils.lab_default_models[self.labNameComboBox.currentText().split(":")[0]])
+
     @property
     def b_processRunning(self):
         return self._b_processRunning
@@ -353,7 +374,8 @@ if __name__ == "__main__":
 
     #FOR TESTING PURPOSES
     mainWindow.useDefaultModelCheckbox.setChecked(False)
-    mainWindow.modelLineEdit.setText('C:/Users/ramye/OneDrive - sfu.ca/My XPS/ML Course Dev/work/SFU_ML/LAB_1/dt_pickle_model.pkl')
+    if not DISABLE_MODEL_TRASFER:
+        mainWindow.modelLineEdit.setText('C:/Users/ramye/OneDrive - sfu.ca/My XPS/ML Course Dev/work/SFU_ML/LAB_1/dt_pickle_model.pkl')
     mainWindow.inputLineEdit.setText('C:/Users/ramye/OneDrive - sfu.ca/My XPS/ML Course Dev/work/SFU_ML/LAB_1/test_data.csv')
     mainWindow.outputFolderLineEdit.setText('C:/Users/ramye/OneDrive/Desktop/random11')
 

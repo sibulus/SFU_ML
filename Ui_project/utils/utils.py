@@ -15,7 +15,7 @@ repo_link = "https://github.com/RamyE/SFU_ML"
 docs_link = "https://github.com/RamyE/SFU_ML"
 lab_names = {"LabTest":"Sample Communication Test", "Lab1": "Regression", "Lab2":"Classification"}
 lab_model_extensions = {"LabTest": "*.*", "Lab1": "*.pkl", "Lab2":"*.pkl"}
-lab_default_models = {"LabTest": "labtestDefaultModel", "Lab1": "lab1Default", "Lab2":"lab2Default"}
+lab_default_models = {"LabTest": "labTestModel", "Lab1": "lab1Model", "Lab2":"lab2Model"}
 
 def find_serial_ports():
     """ Lists serial port names

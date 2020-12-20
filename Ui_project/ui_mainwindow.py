@@ -253,7 +253,7 @@ class Ui_MainWindow(object):
         self.browseOutputButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
         self.refreshSerialPortsButton.setText(QCoreApplication.translate("MainWindow", u"Refresh", None))
 #if QT_CONFIG(whatsthis)
-        self.modelLineEdit.setWhatsThis(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Select the model that will be used. Make sure to select the lab first as only the extensions compatible with the lab selected will be available. Note that this application does not check model validity so make sure that the model is compatible with your inputs</p></body></html>", None))
+        self.modelLineEdit.setWhatsThis(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Select the model that will be used following the instructions in the manual. Note that this application does not check model validity so make sure that the model is compatible with your inputs</p></body></html>", None))
 #endif // QT_CONFIG(whatsthis)
 #if QT_CONFIG(whatsthis)
         self.useDefaultModelCheckbox.setWhatsThis(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Each lab has a default model that will be already stored on the Raspberry Pi. You can use the default model to test communicaton issues and confirm the validity of your input files.</p></body></html>", None))

@@ -140,7 +140,7 @@
         <item row="1" column="1">
          <widget class="QLineEdit" name="modelLineEdit">
           <property name="whatsThis">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select the model that will be used. Make sure to select the lab first as only the extensions compatible with the lab selected will be available. Note that this application does not check model validity so make sure that the model is compatible with your inputs&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select the model that will be used following the instructions in the manual. Note that this application does not check model validity so make sure that the model is compatible with your inputs&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>

@@ -96,7 +96,7 @@ class PiExecuter():
         ackPayload = "None"
         
         (command, payload) = commandStr.rstrip('\t\r\n\0').split(':')
-        print("Received command: {}, with payload: {}".format(command, payload))
+        print("Received command: {}, with payload: {} in State {}".format(command, payload, self.execState))
         if command == "RESET":
             self.execState = ExecState.Connected
             self._currentSerialString = ""
@@ -105,19 +105,18 @@ class PiExecuter():
             self.serialState = SerialState.WaitingToStart
     
         elif self.execState == ExecState.NotConnected:
-            Exception("Wrong Exec State reached somehow: {}".format(self.execState))
-            return
+            raise Exception("Wrong Exec State reached somehow: {}".format(self.execState))
 
         elif self.execState == ExecState.Connected:
             if command != "SELECT_LAB":
-                Exception("You need to select the lab in the current state of: {}".format(self.execState))
+                raise Exception("You need to select the lab in the current state of: {}".format(self.execState))
             else:
                 self._currentLab = LabCode[payload]
                 self.execState = ExecState.LabSelected
 
         elif self.execState == ExecState.LabSelected:
             if not command in ["SAVE_MODEL", "LOAD_MODEL"]:
-                Exception("You need to send or load a default model in the current state of: {}".format(self.execState))
+                raise Exception("You need to send or load a default model in the current state of: {}".format(self.execState))
             else:
                 if self._currentLab != LabCode.LabTest:
                     self._currentModelPath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'saved_models')
@@ -134,6 +133,7 @@ class PiExecuter():
                     
                     try:
                         self._loadedModel = pickle.load(open(self._currentModelPath, 'rb'))
+                        print("Loaded the Model File successfully")
                     except:
                         raise Exception("Problem opening the current model with path {} ".format(str(self._currentModelPath)))
 

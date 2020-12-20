@@ -35,7 +35,8 @@ if __name__ == "__main__":
         except Exception as err:
             startBytes = bytes([STARTING_BYTE]*50)
             serialPort.write(startBytes)
-            serialPort.write(("EXCEPTION: "+ str(err) + " TRACEBACK: "+ traceback.format_exc()).encode("utf-8"))
-            print(str(err), traceback.format_exc())
+            # serialPort.write(("EXCEPTION: "+ str(err) + " TRACEBACK: "+ traceback.format_exc()+'\0'+"00").encode("utf-8"))
+            serialPort.write(("EXCEPTION: "+ str(err) +'\0'+"00").encode("utf-8"))
+            print("REPORTING EXCEPTION:",str(err), traceback.format_exc())
             if executer:
                 del(executer)

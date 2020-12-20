@@ -96,14 +96,15 @@ class Executer:
                     self.execState = ExecState.LabSelected
     
             if self.execState == ExecState.LabSelected:
-                if model is not None:
+                if model is not None and not model.startswith("RPI:"):
                     self.log("Started sending the model, this could take a while, please wait", type="INFO")
                     if self._sendSaveModelCommand(model) == FAILURE_CODE:
                         self.log("Failed to send the selected model", type="ERROR")
                         return ExecutionResult.FAILED
                 else:
-                    if self._sendCommand("LOAD_MODEL", lab_default_models[labCode]) == FAILURE_CODE:
-                        self.log("Failed to load the default model", type="ERROR")
+                    modelName = lab_default_models[labCode] if not model.startswith("RPI:") else model[4:]
+                    if self._sendCommand("LOAD_MODEL", modelName) == FAILURE_CODE:
+                        self.log("Failed to load the required model", type="ERROR")
                         return ExecutionResult.FAILED
 
                 self.execState = ExecState.ModelLoaded
@@ -194,6 +195,7 @@ class Executer:
                 if progressBar is not None:
                     currentProgressBarValue += progressBarIncrements
                     progressBar.setValue(currentProgressBarValue)
+                # print(result)
                 outputs = [float(i) for i in result.rstrip(' \t\r\n\0').split(',')]
                 for index, output in enumerate(outputs):
                     if index < len(headers):
@@ -228,8 +230,10 @@ class Executer:
             self.serialTimeoutTimer.start()
             succeeded, string = self.getSerialAck()
             print("The time spent from sending a command to receiving a reply (or timeouting) is ",time.time()-t)
-            if (succeeded):
+            if succeeded:
                 return string
+            elif not succeeded and "EXCEPTION" in string:
+                break 
         return FAILURE_CODE
 
     def _sendSaveModelCommand(self, model):
@@ -296,6 +300,7 @@ class Executer:
                         string = ""
                 else:
                     self.log("Acknowledgment Failed, received: {}".format(currentSerialString.rstrip("\t\r\n\0")), type="ERROR")
+                    string = currentSerialString
                 break
 
         return succeeded, string
@@ -316,7 +321,7 @@ class Executer:
 
     @execState.setter
     def execState(self, newVal):
-        print("Switched to Exec State: {}".format(newVal))
+        # print("Switched to Exec State: {}".format(newVal))
         self._execState = newVal
 
     @property
@@ -325,6 +330,6 @@ class Executer:
 
     @serialState.setter
     def serialState(self, newVal):
-        print("Switched to Serial State: {}".format(newVal))
+        # print("Switched to Serial State: {}".format(newVal))
         self._serialState = newVal
 
