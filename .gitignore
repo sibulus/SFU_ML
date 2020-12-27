@@ -1,3 +1,5 @@
 .vscode
 *.pyc
 .env
+Ui_project/dist
+Ui_project/build
