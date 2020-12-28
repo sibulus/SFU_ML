@@ -3,3 +3,4 @@
 .env
 Ui_project/dist
 Ui_project/build
+RPi_Script/saved_models/*
