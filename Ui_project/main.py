@@ -47,6 +47,19 @@ class MainWindow(QMainWindow):
         self.browseModelButton = self.findChild(QPushButton, "browseModelButton")
         self.startStopButton = self.findChild(QPushButton, "startStopButton")
         self.useDefaultModelCheckbox = self.findChild(QCheckBox, "useDefaultModelCheckbox")
+        self.chooseModelLabel = self.findChild(QLabel, "chooseModelLabel")
+
+        #disabling model transfer capability if needed
+        self._modelRPiPath = False
+        if DISABLE_MODEL_TRASFER:
+            self.useDefaultModelCheckbox.hide()
+            self.modelLineEdit.setEnabled(1)
+            self.browseModelButton.hide()
+            self.chooseModelLabel.setText(self.chooseModelLabel.text()+" Name")
+            # self.gridLayout = self.findChild(QGridLayout, "gridLayout")
+            # self.gridLayout.removeWidget(self.browseModelButton)
+            # self.gridLayout.removeWidget(self.useDefaultModelCheckbox)
+            self._modelRPiPath = True
 
         self.startStopButton.clicked.connect(self.handleStartStopButtonClicked)
         self.browseOutputButton.clicked.connect(self.handleBrowseOutputButton)
@@ -77,16 +90,6 @@ class MainWindow(QMainWindow):
 
         #initialize member variables
         self._b_processRunning = False
-
-        #disabling model transfer capability if needed
-        self._modelRPiPath = False
-        if DISABLE_MODEL_TRASFER:
-            self.useDefaultModelCheckbox.hide()
-            self.browseModelButton.hide()
-            # self.gridLayout = self.findChild(QGridLayout, "gridLayout")
-            # self.gridLayout.removeWidget(self.browseModelButton)
-            # self.gridLayout.removeWidget(self.useDefaultModelCheckbox)
-            self._modelRPiPath = True
 
         # set up lab names
         self.setUpLabNames()
@@ -265,7 +268,7 @@ class MainWindow(QMainWindow):
         helpBox.setWindowTitle("Need Help?")
         helpBox.setText("For Help, please reach out to your Instructor or TA or read the lab manual")
         helpBox.setTextFormat(Qt.RichText)
-        helpBox.setInformativeText(f"You can access the project <a href=\"{utils.docs_link}\">Documentation</a> and source in the <a href=\"{utils.repo_link}\">Github Repo!</a>")
+        helpBox.setInformativeText(f"You can access the project <a href=\"{utils.docs_link}\">Manual</a> and source in the <a href=\"{utils.repo_link}\">Github Repo!</a>")
         helpBox.setWindowIcon(self.appIcon)
         helpBox.exec_()
 
@@ -319,9 +322,11 @@ class MainWindow(QMainWindow):
         self.logger.log("Failed to save the log, please select a valid file", type="ERROR")
 
     def handleClearLogButton(self):
-        self.logTextBrowser.clear()
+        self.logger.clearLog()
 
     def handleUseDefaultModelCheckboxStateChanged(self):
+        if self._modelRPiPath:
+            return
         if not self.useDefaultModelCheckbox.checkState():
             self.modelLineEdit.setDisabled(0)
             self.browseModelButton.setDisabled(0)
@@ -373,10 +378,10 @@ if __name__ == "__main__":
     mainWindow.show()
 
     #FOR TESTING PURPOSES
-    mainWindow.useDefaultModelCheckbox.setChecked(False)
-    if not DISABLE_MODEL_TRASFER:
-        mainWindow.modelLineEdit.setText('C:/Users/ramye/OneDrive - sfu.ca/My XPS/ML Course Dev/work/SFU_ML/LAB_1/dt_pickle_model.pkl')
-    mainWindow.inputLineEdit.setText('C:/Users/ramye/OneDrive - sfu.ca/My XPS/ML Course Dev/work/SFU_ML/LAB_1/test_data.csv')
-    mainWindow.outputFolderLineEdit.setText('C:/Users/ramye/OneDrive/Desktop/random11')
+    # mainWindow.useDefaultModelCheckbox.setChecked(False)
+    # if not DISABLE_MODEL_TRASFER:
+    #     mainWindow.modelLineEdit.setText('C:/Users/ramye/OneDrive - sfu.ca/My XPS/ML Course Dev/work/SFU_ML/LAB_1/dt_pickle_model.pkl')
+    # mainWindow.inputLineEdit.setText('C:/Users/ramye/OneDrive - sfu.ca/My XPS/ML Course Dev/work/SFU_ML/LAB_1/test_data.csv')
+    # mainWindow.outputFolderLineEdit.setText('C:/Users/ramye/OneDrive/Desktop/random11')
 
     sys.exit(app.exec_())

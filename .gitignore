@@ -3,4 +3,7 @@
 .env
 Ui_project/dist
 Ui_project/build
+Ui_project/*.spec
 RPi_Script/saved_models/*
+LAB_*/*.pkl
+LAB_*/test_data.csv

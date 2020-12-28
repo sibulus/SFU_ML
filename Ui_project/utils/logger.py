@@ -53,6 +53,9 @@ class Logger:
             self.log("An error was found. Please check the output file path!", type="ERROR")
             return -1
         return 0
+    def clearLog(self):
+        self.logBox.clear()
+        self.labelBox.clear()
 
     def enableLogging(self):
         self._enabled = True
