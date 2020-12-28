@@ -25,7 +25,7 @@
            <bool>true</bool>
           </property>
           <property name="text">
-           <string>Choose &amp;Input CSV file</string>
+           <string>Choose &amp;Test Data CSV file</string>
           </property>
           <property name="buddy">
            <cstring>inputLineEdit</cstring>
@@ -45,7 +45,7 @@
         <item row="1" column="0">
          <widget class="QLabel" name="chooseModelLabel">
           <property name="text">
-           <string>Choose Model</string>
+           <string>Choose &amp;Model</string>
           </property>
           <property name="buddy">
            <cstring>modelLineEdit</cstring>
