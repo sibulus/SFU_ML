@@ -88,10 +88,7 @@ Shell: sudo su – (if you want to be able to write to protected directories, e.
 ```
 5. Connect and you can transfer files just by dragging and dropping.
 
-### 1.4. Download Python 3 and the required dependencies
-//TODO
-
-### 1.5. Clone the python script
+### 1.4. Clone the python script
 
 1. SSH to the raspberry pi using `ssh pi@<IP_ADDRESS>` and then enter the password, which is `raspberry` by default
 2. Create a folder in the Raspberry Pi, let's create it in the home directory. First `cd ~` and then `mkdir SFU_ML` to create the directory
@@ -103,11 +100,52 @@ Shell: sudo su – (if you want to be able to write to protected directories, e.
 7. Clone the folder using `git pull origin master`
 8. Later when you want to get the latest updates from the repo, you can go to the folder and just use `git pull`
 
+### 1.5. Download Python 3 and the required dependencies
+
+1. SSH to the Raspberry Pi using `ssh pi@<ip_address>` in a command prompt and then enter the password
+2. Install python3.7 using `sudo apt-get install python3.7`
+3. Install the required dependencies using `pip3 install -r /home/pi/SFU_ML/RPi_Script/requirements.txt`
+
+### 1.6. Setup the python script to run automatically on startup
+
+1. SSH to the Raspberry Pi
+2. Edit rc.local file using `sudo nano /etc/rc.local`
+3. Add commands to execute the python program. Be sure to leave the line `exit 0` at the end. Add the following line before `exit 0`
+```
+python3 /home/pi/SFU_ML/RPi_Script/main.py &
+```
+4. Save the file and exit. In nano, to exit, type Ctrl-x, and then Y.
+
 # 2. Set up and Run the GUI
 
 ## 2.1. Setup the Virtual Environment
-//TODO
-## 2.2. Clone the repo
-//TODO
-## 2.3. Run!
-//TODO
+This section covers installing a python interpreter and package installations in a virtual environment, rather than system-wide. We will use Anaconda here, however, if you have an alternative that you are using, you may continue to use that. To setup the virtual environment and install the required dependenHead over to anaconda.com and install the latest version of Anaconda. Make sure to download the “Python 3.7 Version” for the appropriate architecture.
+cies, follow these steps:
+
+1. Head over to [anaconda.com](anaconda.com) and install the latest version of Anaconda. Make sure to download the “Python 3.7 Version” for the appropriate architecture. Check this [page](https://www.geeksforgeeks.org/how-to-install-anaconda-on-windows/) for help, if needed.
+2. Open the command prompt and confirm that conda is in PATH by typing `conda -V`
+3. Create a new virtual environment using `conda create -n ml_course python=3.7 pip` where `ml_course` is the name of the virtual environment and could be activated later using `conda activate ml_course`
+4. The required dependencies will be installed in the next section as they require the repo to be cloned first
+## 2.2. Clone the repo and install the dependencies
+
+1. Clone the repo to your computer as it has the labs and GUI code. Go to the directory where you want to clone the repo and use `https://github.com/RamyE/SFU_ML.git` (This will not work if you do not have git installed. You can download Git from [here](https://git-scm.com/downloads))
+2. Navigate to the directory `Ui_project` inside the repo folder throught the command line interface, you can use `cd Ui_project`
+3. Activate the right python virtual environment using `conda activate ml_course`
+4. Install all the dependencies using `pip install -r requiements.txt`
+
+## 2.3. Run! (but don't run away)
+Now all you need to do is run the GUI. You can follow these steps:
+
+1. Open a command line prompt
+2. Navigate to the repo folder using `cd` which stands for **change directory**
+3. Activate the virtual environment (don't forget this step!) using `conda activate ml_course`
+4. run the GUI Application using `python .\Ui_project\main.py`
+
+# 3. How to use the GUI
+The GUI helps you use test your trained model on the end use platform, which is the Raspberry Pi. Before you use the GUI, you will need to have the following ready:
+
+1. A Raspberry Pi Zero W connected to your computer.
+2. A trained model generated from the lab tutorials and transferred to the Raspberry Pi using WinSCP.
+3. Test Dataset without the labels in a CSV file, which could be generated as part of the lab tutorials.
+4. Run the Raspberry Pi Script on the Raspberry Pi by SSH'ing to the Raspberry Pi and starting the script (this step is only needed if you did not setup the script to run automatically on startup).
+5. Choose the right options in the GUI, connect to the Raspberry Pi Serial Port and then press **Start Processing**. For help with the options, you can use the **"?"** button on the top right corner of the GUI Window.
