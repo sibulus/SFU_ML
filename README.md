@@ -1,7 +1,5 @@
 # SFU MSE ML Course Labs and Tools
 
-# This repo contains the following:
-
 ## Labs:
 
 ### [Lab 1](LAB_1)
