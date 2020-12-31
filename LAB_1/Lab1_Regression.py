@@ -45,8 +45,8 @@ from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
 # Save Test Set
-np.savetxt("Features_test.csv", X_test, delimiter=",")
-np.savetxt("Targets_test.csv", y_test, delimiter=",")
+np.savetxt("features_house_test.csv", X_test, delimiter=",")
+np.savetxt("targets_house_test.csv", y_test, delimiter=",")
 
 #%% Simple Linear Regression
 
