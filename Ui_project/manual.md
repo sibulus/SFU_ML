@@ -118,7 +118,7 @@ Shell: sudo su – (if you want to be able to write to protected directories, e.
 2. Edit rc.local file using `sudo nano /etc/rc.local`
 3. Add commands to execute the python program. Be sure to leave the line `exit 0` at the end. Add the following line before `exit 0`
 ```
-python3 /home/pi/SFU_ML/RPi_Script/main.py &
+sudo python3 /home/pi/SFU_ML/RPi_Script/main.py &
 ```
 4. Save the file and exit. In nano, to exit, type Ctrl-x, and then Y.
 
@@ -133,10 +133,10 @@ This section covers installing a python interpreter and package installations in
 4. The required dependencies will be installed in the next section as they require the repo to be cloned first
 
 ## 2.2. Clone the repo and install the dependencies
-1. Clone the repo to your computer as it has the labs and GUI code. Go to the directory where you want to clone the repo and use `https://github.com/RamyE/SFU_ML.git` (This will not work if you do not have git installed. You can download Git from [here](https://git-scm.com/downloads))
+1. Clone the repo to your computer as it has the labs and GUI code. Go to the directory where you want to clone the repo and use `git clone https://github.com/RamyE/SFU_ML.git` (This will not work if you do not have git installed. You can download Git from [here](https://git-scm.com/downloads))
 2. Navigate to the directory `Ui_project` inside the repo folder throught the command line interface, you can use `cd Ui_project`
 3. Activate the right python virtual environment using `conda activate ml_course`
-4. Install all the dependencies using `pip install -r requiements.txt`
+4. Install all the dependencies using `pip install -r requirements.txt`
 
 ## 2.3. Run! (but don't run away)
 Now all you need to do is run the GUI. You can follow these steps:
