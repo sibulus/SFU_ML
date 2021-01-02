@@ -98,8 +98,8 @@ Shell: sudo su – (if you want to be able to write to protected directories, e.
 1. Allow cloning subdirectories using `git config core.sparsecheckout true`
 1. To choose the right folder to clone, use `echo 'RPi_Script*' >> .git/info/sparse-checkout`
 1. Add the remote repo using `git remote add -f origin https://github.com/RamyE/SFU_ML.git`
-1. Clone the folder using `git pull origin master`
-1. Later when you want to get the latest updates from the repo, you can go to the folder and just use `git pull`
+1. Set master to track the remote master branch using `git branch --set-upstream-to=origin/master master`
+1. Clone the folder using `git pull'. Later when you want to get the latest updates from the repo, you can go to the folder and just use `git pull`.
 
 ### 1.5. Download Python 3 and the required dependencies
 
