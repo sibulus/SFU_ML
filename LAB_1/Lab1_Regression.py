@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-
-Lab 1 - Regression
-
+Simon Fraser University - Mechatronic Systems Engineering
+Spring 2021 - MSE491 - Application of Machine Learning in Mechatronic Systems
+Lab 1  - Regression
 @author: Amin Kabir - kabir@sfu.ca
-
 """
+
+from IPython import get_ipython
+get_ipython().run_line_magic('matplotlib', 'qt5')
 
 # Importing libraries 
 import numpy as np
@@ -14,6 +16,8 @@ import pandas as pd
 
 # Importing the dataset
 dataset = pd.read_csv('house_price.csv', header=0)
+
+dataset.sample()
 
 # X: Features, y: Targets
 X = dataset.iloc[:, :-1]
@@ -40,6 +44,9 @@ X = imp.transform(X)
 from sklearn.model_selection import train_test_split 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
+# Save Test Set
+np.savetxt("features_house_test.csv", X_test, delimiter=",")
+np.savetxt("targets_house_test.csv", y_test, delimiter=",")
 
 #%% Simple Linear Regression
 
@@ -64,6 +71,7 @@ def viz_linear():
     plt.ylabel('The property sale price in dollars')
     plt.show()
     return
+plt.figure()
 viz_linear()
 
 # Predicting a random new result 
@@ -89,7 +97,7 @@ from sklearn import preprocessing
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import PolynomialFeatures
 
-degree = 2
+degree = 10
 
 # 1 feature (Linear feet of street connected to property)
 # with 20 random samples for visualization
@@ -119,6 +127,7 @@ def viz_polymonial():
     plt.ylabel('The property sale price in dollars')
     plt.show()
     return
+plt.figure()
 viz_polymonial()
 
 
@@ -135,6 +144,10 @@ mult_lin_reg10.fit(X10_train, y_train)
 ### Multiple Linear Regression - using all features
 mult_lin_reg = LinearRegression()
 mult_lin_reg.fit(X_train, y_train)
+
+# Save Model
+import pickle
+pickle.dump(mult_lin_reg, open('Model_MLR.pkl', 'wb'))
 
 # Evaluation
 from sklearn.metrics import r2_score
@@ -153,6 +166,9 @@ print('\nMultiple Linear Regression using all features - R-Squared: %f' %lin_reg
 from sklearn.tree import DecisionTreeRegressor
 dt_reg = DecisionTreeRegressor()
 dt_reg.fit(X_train, y_train)
+# Save Model
+import pickle
+pickle.dump(dt_reg, open('Model_DT.pkl', 'wb'))
 # Evaluation
 from sklearn.metrics import r2_score
 y_pred = mult_lin_reg.predict(X_test).astype('int64')
@@ -162,6 +178,9 @@ print('\nDecision Tree Regression - R-Squared: %f' %dt_reg_r2)
 ### K-Nearest Neighbors Regressor
 from sklearn.neighbors import KNeighborsRegressor
 knn_reg = KNeighborsRegressor(n_neighbors=5)
+# Save Model
+import pickle
+pickle.dump(knn_reg, open('Model_KNN.pkl', 'wb'))
 knn_reg.fit(X_train, y_train)
 # Evaluation
 from sklearn.metrics import r2_score

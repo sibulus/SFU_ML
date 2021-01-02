@@ -94,14 +94,16 @@ Shell: sudo su – (if you want to be able to write to protected directories, e.
 ### 1.4. Clone the python script
 
 1. SSH to the raspberry pi using `ssh pi@<IP_ADDRESS>` and then enter the password, which is `raspberry` by default
-2. Create a folder in the Raspberry Pi, let's create it in the home directory. First `cd ~` and then `mkdir SFU_ML` to create the directory
-3. open the folder by `cd SFU_ML`
-3. Initialize a repo through `git init`
-4. Allow cloning subdirectories using `git config core.sparsecheckout true`
-5. To choose the right folder to clone, use `echo 'RPi_Script*' >> .git/info/sparse-checkout`
-6. Add the remote repo using `git remote add -f origin https://github.com/RamyE/SFU_ML.git`
-7. Clone the folder using `git pull origin master`
-8. Later when you want to get the latest updates from the repo, you can go to the folder and just use `git pull`
+1. Create a folder in the Raspberry Pi, let's create it in the home directory. First `cd ~` and then `mkdir SFU_ML` to create the directory
+1. open the folder by `cd SFU_ML`
+1. Install Git to the RPi using `sudo apt-get install git`
+1. Initialize a repo through `git init`
+1. Allow cloning subdirectories using `git config core.sparsecheckout true`
+1. To choose the right folder to clone, use `echo 'RPi_Script*' >> .git/info/sparse-checkout`
+1. Add the remote repo using `git remote add -f origin https://github.com/RamyE/SFU_ML.git`
+1. Clone the folder using `git pull origin master`
+1. Set master to track the remote master branch using `git branch --set-upstream-to=origin/master master`
+1. Later when you want to get the latest updates from the repo, you can go to the folder and just use `git pull`.
 
 ### 1.5. Download Python 3 and the required dependencies
 
