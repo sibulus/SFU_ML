@@ -87,7 +87,7 @@ Password: raspberry
 ```
 4. **(This is Optional)** In **Advanced > SCP /Shell**:
 ```
-Shell: sudo su – (if you want to be able to write to protected directories, e.g. /var/ww/ to transfer files for apache web server)
+Shell: sudo su – (if you want to be able to write to protected directories)
 ```
 5. Connect and you can transfer files just by dragging and dropping.
 
