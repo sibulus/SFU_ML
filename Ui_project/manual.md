@@ -64,7 +64,7 @@ We need to enable loading of the serial USB gadget driver.
 
 In **`BOOT/cmdline.txt`**:
 
-Add `modules-load=dwc2,g_serial` to the kernel command line file, `cmdline.txt` in `boot` and remove the `init=/usr/lib/raspi-config/init_resize.sh` part as otherwise the first boot will resize the root partition and the USB drivers won't engage until the next boot and it will first look like the configuration failed. Note the `root=PARTUUID=xxxxxxxx-yy` part, don't modify that.
+Add `modules-load=dwc2,g_serial` to the kernel command line file, `cmdline.txt` in `boot. Note the `root=PARTUUID=xxxxxxxx-yy` part, don't modify that. You may need to power cycle it one more time after the first boot for the USB configuration to work.
 
 ## 1.2. Connect to your Board
 First of all, insert the prepared micro SD card to the RPi. Use the USB cable to connect the Raspberry Pi to your computer. Make sure to connect to the port labelled **USB** NOT the one labelled **PWR**. After a few minutes, the Raspberry Pi should be running and you will need to confirm two things:
@@ -108,7 +108,8 @@ Shell: sudo su – (if you want to be able to write to protected directories, e.
 ### 1.5. Download Python 3 and the required dependencies
 
 1. SSH to the Raspberry Pi using `ssh pi@<ip_address>` in a command prompt and then enter the password
-2. Install python3.7 using `sudo apt-get install python3.7`
+1. Install python3.7 using `sudo apt-get install python3.7`
+1. Install pip using `sudo apt-get install python3-pip`
 3. Install the required dependencies using `pip3 install -r /home/pi/SFU_ML/RPi_Script/requirements.txt`
 
 ### 1.6. Setup the python script to run automatically on startup
@@ -131,8 +132,8 @@ cies, follow these steps:
 2. Open the command prompt and confirm that conda is in PATH by typing `conda -V`
 3. Create a new virtual environment using `conda create -n ml_course python=3.7 pip` where `ml_course` is the name of the virtual environment and could be activated later using `conda activate ml_course`
 4. The required dependencies will be installed in the next section as they require the repo to be cloned first
-## 2.2. Clone the repo and install the dependencies
 
+## 2.2. Clone the repo and install the dependencies
 1. Clone the repo to your computer as it has the labs and GUI code. Go to the directory where you want to clone the repo and use `https://github.com/RamyE/SFU_ML.git` (This will not work if you do not have git installed. You can download Git from [here](https://git-scm.com/downloads))
 2. Navigate to the directory `Ui_project` inside the repo folder throught the command line interface, you can use `cd Ui_project`
 3. Activate the right python virtual environment using `conda activate ml_course`
