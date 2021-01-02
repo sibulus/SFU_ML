@@ -16,7 +16,10 @@ To run an operating system (OS) on the raspberry pi, you will need to burn it on
 2. Run the imager
 3. For the operating system, choose **Raspberry PI OS (Other)** and then **Raspberry Pi OS Lite**
 4. For the SD Card, insert the micro-SD card into your computer and select it
-5. Click **Write**
+5. Click **Write**, and Confirm if prompted
+6. When the image is written, you may need to remove and re-insert the SD card to be able to continue
+
+Note that the SD Card root folder will be referred to as `boot` or `BOOT` folder in the rest of this manual
 
 ### 1.1.2. Enable Wireless Networking
 
@@ -68,7 +71,7 @@ First of all, insert the prepared micro SD card to the RPi. Use the USB cable to
 
 1. The Raspberry Pi is showing as a COM port. You can confirm that through the Device Manager in Windows.
 2. The Raspberry Pi has connected successfully to your local wireless network and has obtained an IP Address. At this point, you should also note down the IP Address of the RPi.
-To find the IP address, there are multiple ways. You can check the **Retrieving your Raspberry Pi’s IP Address from another device** section [here](https://pimylifeup.com/raspberry-pi-ip-address/) as an example.
+To find the IP address, there are multiple ways. You can check the **Retrieving your Raspberry Pi’s IP Address from another device** section [here](https://pimylifeup.com/raspberry-pi-ip-address/) as an example. One method that I find particularly easy is to try to SSH to the RPi directly using `ssh pi@raspberrypi` and enter the default password `raspberry` and then use `hostname -I` when connected to get the IP Address.
 
 ## 1.3. Setup a method to transfer files to the Raspberry Pi
 You will ned a way to transfer files from your computer to the Raspberry Pi. This will be mainly needed in order to copy the trained models files to the Raspberry Pi. There are multiple ways to do that such as copying files over SSH or setting up a samba server. However, we will go over only one method here that works for Windows.
