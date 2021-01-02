@@ -125,8 +125,7 @@ python3 /home/pi/SFU_ML/RPi_Script/main.py &
 # 2. Set up and Run the GUI
 
 ## 2.1. Setup the Virtual Environment
-This section covers installing a python interpreter and package installations in a virtual environment, rather than system-wide. We will use Anaconda here, however, if you have an alternative that you are using, you may continue to use that. To setup the virtual environment and install the required dependenHead over to anaconda.com and install the latest version of Anaconda. Make sure to download the “Python 3.7 Version” for the appropriate architecture.
-cies, follow these steps:
+This section covers installing a python interpreter and package installations in a virtual environment, rather than system-wide. We will use Anaconda here, however, if you have an alternative that you are using, you may continue to use that. To setup the virtual environment and install the required dependencies, follow these steps:
 
 1. Head over to [anaconda.com](anaconda.com) and install the latest version of Anaconda. Make sure to download the “Python 3.7 Version” for the appropriate architecture. Check this [page](https://www.geeksforgeeks.org/how-to-install-anaconda-on-windows/) for help, if needed.
 2. Open the command prompt and confirm that conda is in PATH by typing `conda -V`
