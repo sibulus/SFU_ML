@@ -119,7 +119,7 @@ Shell: sudo su – (if you want to be able to write to protected directories)
 2. Edit rc.local file using `sudo nano /etc/rc.local`
 3. Add commands to execute the python program. Be sure to leave the line `exit 0` at the end. Add the following line before `exit 0`
 ```
-python3 /home/pi/SFU_ML/RPi_Script/main.py &
+su pi -c 'python3 /home/pi/SFU_ML/RPi_Script/main.py' &
 ```
 4. Save the file and exit. In nano, to exit, type Ctrl-x, and then Y.
 
