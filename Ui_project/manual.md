@@ -110,7 +110,8 @@ Shell: sudo su – (if you want to be able to write to protected directories)
 1. SSH to the Raspberry Pi using `ssh pi@<ip_address>` in a command prompt and then enter the password
 1. Install python3.7 using `sudo apt-get install python3.7`
 1. Install pip using `sudo apt-get install python3-pip`
-3. Install the required dependencies using `pip3 install -r /home/pi/SFU_ML/RPi_Script/requirements.txt`
+1. Install other dependencies using `sudo apt-get install libatlas-base-dev`
+1. Install the required dependencies using `pip3 install -r /home/pi/SFU_ML/RPi_Script/requirements.txt`
 
 ### 1.6. Setup the python script to run automatically on startup
 
