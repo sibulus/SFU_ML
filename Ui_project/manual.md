@@ -1,6 +1,6 @@
 # Applications of ML in Mechatronics Tools GUI Technical Manual
 
-This guide is prepared as a reference for you to know the necessary setup needed to operate the GUI. Additionally, it is meant to serve as a brief tutorial to help you understand some of the basics of the Raspberry Pi, esepecially if you are using it for a project.
+This guide is prepared as a reference for you to know the necessary setup needed to operate the GUI. Additionally, it is meant to serve as a brief tutorial to help you understand some of the basics of the Raspberry Pi, esepecially if you are using it for a project....
 
 # 1. Setup the Raspberry Pi
 
