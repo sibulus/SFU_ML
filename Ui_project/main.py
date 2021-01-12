@@ -1,4 +1,13 @@
 # print("This application may takes a minute or more to load, please wait")
+
+# You can uncomment the following lines to ensure that this application uses the right DLLs even in the presence of other incompatible DLLs in the environment
+
+# import os
+# import PySide2
+# dirname = os.path.dirname(PySide2.__file__)
+# plugin_path = os.path.join(dirname, 'plugins', 'platforms')
+# os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = plugin_path
+
 import sys
 from PySide2.QtWidgets import QApplication, QGridLayout, QMainWindow, QWidget, QComboBox, QPushButton, QLabel,\
                                 QLineEdit, QTextBrowser, QProgressBar, QAction, QDialog, QFileDialog, \
@@ -12,7 +21,6 @@ from utils import utils
 import pandas as pd
 import serial
 import time
-import os
 
 DISABLE_MODEL_TRASFER = True
 class MainWindow(QMainWindow):
@@ -164,12 +172,12 @@ class MainWindow(QMainWindow):
         if self.inputLineEdit.text()[-4:].lower() != ".csv" :
             self.logger.log("Please select a valid input csv file", type="ERROR")
             return
-        if self.outputFolderLineEdit.text() is "":
+        if self.outputFolderLineEdit.text() == "":
             self.logger.log("Please select an output directory", type="ERROR")
             return
         self.executer = Executer(serialObj=self.port, loggerObj=self.logger)
 
-        if self.modelLineEdit.text() is not "":
+        if self.modelLineEdit.text() != "":
             modelPath = self.modelLineEdit.text()
         else:
             modelPath = None
