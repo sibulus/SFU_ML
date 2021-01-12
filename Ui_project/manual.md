@@ -132,6 +132,7 @@ This section covers installing a python interpreter and package installations in
 2. Open the command prompt and confirm that conda is in PATH by typing `conda -V`
 3. Create a new virtual environment using `conda create -n ml_course python=3.7 pip` where `ml_course` is the name of the virtual environment and could be activated later using `conda activate ml_course`
 4. The required dependencies will be installed in the next section as they require the repo to be cloned first
+5. Make sure not to install any other applications, especially GUI applications that use Qt, in the same virtual environment (e.g. Spyder) as they may cause conflicts. If you want to use other applications, you can install them in your **base** environment which could be activated using `conda activate base`
 
 ## 2.2. Clone the repo and install the dependencies
 1. Clone the repo to your computer as it has the labs and GUI code. Go to the directory where you want to clone the repo and use `git clone https://github.com/RamyE/SFU_ML.git` (This will not work if you do not have git installed. You can download Git from [here](https://git-scm.com/downloads))
