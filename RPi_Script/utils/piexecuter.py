@@ -103,7 +103,10 @@ class PiExecuter():
             self._currentCheckSum[0] = 0x00
             self._currentCheckSum[1] = 0x00
             self.serialState = SerialState.WaitingToStart
-    
+
+        elif command == "GET_IP":
+            ackPayload = os.system('hostname -I')
+
         elif self.execState == ExecState.NotConnected:
             raise Exception("Wrong Exec State reached somehow: {}".format(self.execState))
 
