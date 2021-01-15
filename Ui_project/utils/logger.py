@@ -32,9 +32,10 @@ class Logger:
             except:
                 print("An invalid special log has been provided: ", special)
         color = "black"
-        if type is not None:
-            string = string + type + ": "
-            color = typeColors[type]
+        if type is None:
+            type = "INFO"
+        string = string + type + ": "
+        color = typeColors[type]
         string = string + logLine
         self.logBox.append(string)
         self.labelBox.setStyleSheet("color: "+color)

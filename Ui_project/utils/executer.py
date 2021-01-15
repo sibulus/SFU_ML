@@ -20,7 +20,7 @@ SERIAL_COMMAND_MAX_TRIALS = 3 #in number of trials
 
 # LOAD_MODEL is currently not used but is kept in case of implementing re-use of currently saved models in the future
 # SAVE_MODEL currently saves and loads the saved model on the 
-SERIAL_COMMANDS = ["RESET", "SELECT_LAB", "SAVE_MODEL", "LOAD_MODEL", "PROCESS", "PROCESSING_DONE"]
+SERIAL_COMMANDS = ["RESET", "SELECT_LAB", "SAVE_MODEL", "LOAD_MODEL", "PROCESS", "PROCESSING_DONE", "GET_IP"]
 STARTING_BYTE = 0x01
 
 FAILURE_CODE = -1
@@ -76,6 +76,7 @@ class Executer:
         self.serialPort.flushInput()
         self.serialPort.flushOutput()
         startTime = time.time()
+
         # progressBar = None
         if progressBar is not None:
             progressBar.setValue(0)
@@ -156,6 +157,15 @@ class Executer:
             self.log(traceback.format_exc())
             print(traceback.format_stack())
             return ExecutionResult.FAILED
+
+    def executeOther(self, function, payload = "None"):
+        if function not in SERIAL_COMMANDS:
+            return ExecutionResult.FAILED
+        result = self._sendCommand(function, payload)
+        if result == FAILURE_CODE:
+            return ExecutionResult.FAILED
+        else:
+            return result
 
     def reset(self):
         startBytes = bytes([STARTING_BYTE]*50)

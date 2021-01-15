@@ -93,6 +93,11 @@ class MainWindow(QMainWindow):
         self.actionHelp.triggered.connect(self.handleActionHelpClicked)
         self.actionAbout.triggered.connect(self.handleActionAboutClicked)
 
+        # Add additional menu actions
+        self.utilitiesMenu = self.menuBar().addMenu("Utilities")
+        self.actionGetRPiIP = QAction("Get RPi IP")
+        self.utilitiesMenu.addAction(self.actionGetRPiIP)
+        self.actionGetRPiIP.triggered.connect(self.handleActionGetRPiIPClicked)
         #create objects from the other classes
         self.logger = Logger(self.logTextBrowser, self.lastLogTextLabel)
 
@@ -346,6 +351,32 @@ class MainWindow(QMainWindow):
     def handleLabNameComboboxCurrentIndexChanged(self):
         if self._modelRPiPath:
             self.modelLineEdit.setText(utils.lab_default_models[self.labNameComboBox.currentText().split(":")[0]])
+        # Disable the model options when the lab selected is Communication Test
+        if self.labNameComboBox.currentIndex() == 0:
+            self.modelLineEdit.setDisabled(1)
+            self.browseModelButton.setDisabled(1)
+            self.modelLineEdit.clear()
+        else:
+            self.modelLineEdit.setDisabled(0)
+            self.browseModelButton.setDisabled(0)            
+
+    def handleActionGetRPiIPClicked(self):
+        self.logger.log("Attempting to Get Raspberry Pi IP Address", type="INFO")
+        if not self.b_serialConnected:
+            replyMessage = "Serial is not connected, Please connect serial first"
+        else:
+            self.executer = Executer(serialObj=self.port, loggerObj=self.logger)
+            ipaddr = self.executer.executeOther("GET_IP")
+            replyMessage = ("Raspberry Pi IP is "+ ipaddr) if ipaddr != ExecutionResult.FAILED else "Failed to obtain the IP Address"
+        self.logger.log(replyMessage)
+        ipAddrMessage = QMessageBox()
+        ipAddrMessage.setIcon(QMessageBox.Information)
+        ipAddrMessage.setStandardButtons(QMessageBox.Ok)
+        ipAddrMessage.setWindowTitle("Raspberry Pi IP Address")
+        ipAddrMessage.setText(replyMessage)
+        ipAddrMessage.setTextFormat(Qt.RichText)
+        ipAddrMessage.setWindowIcon(self.appIcon)
+        ipAddrMessage.exec_()
 
     @property
     def b_processRunning(self):
