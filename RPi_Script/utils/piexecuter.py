@@ -106,7 +106,7 @@ class PiExecuter():
 
         elif command == "GET_IP":
             from subprocess import check_output
-            ackPayload = str(check_output(['hostname','-I']))
+            ackPayload = str(check_output(['hostname','-I'])).decode('utf-8').split(" ")[0]
 
         elif self.execState == ExecState.NotConnected:
             raise Exception("Wrong Exec State reached somehow: {}".format(self.execState))
