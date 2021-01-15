@@ -355,7 +355,7 @@ class MainWindow(QMainWindow):
         if self.labNameComboBox.currentIndex() == 0:
             self.modelLineEdit.setDisabled(1)
             self.browseModelButton.setDisabled(1)
-            self.modelLineEdit.clear()
+            self.modelLineEdit.setText("Model is not required")
         else:
             self.modelLineEdit.setDisabled(0)
             self.browseModelButton.setDisabled(0)            
