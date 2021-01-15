@@ -7,6 +7,8 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.neighbors import KNeighborsRegressor
 import numpy as np
 import zlib
+from subprocess import check_output
+
 
 STARTING_BYTE = 0x01
 
@@ -105,8 +107,7 @@ class PiExecuter():
             self.serialState = SerialState.WaitingToStart
 
         elif command == "GET_IP":
-            from subprocess import check_output
-            ackPayload = str(check_output(['hostname','-I'])).decode('utf-8').split(" ")[0]
+            ackPayload = check_output(['hostname','-I']).decode('utf-8').split(" ")[0]
 
         elif self.execState == ExecState.NotConnected:
             raise Exception("Wrong Exec State reached somehow: {}".format(self.execState))
