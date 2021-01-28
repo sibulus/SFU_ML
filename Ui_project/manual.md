@@ -67,7 +67,7 @@ In **`BOOT/cmdline.txt`**:
 
 Add `modules-load=dwc2,g_serial` to the kernel command line file, `cmdline.txt` in `boot`. Note the `root=PARTUUID=xxxxxxxx-yy` part, don't modify that. You may need to power cycle it one more time after the first boot for the USB configuration to work.
 
-After adding the new snippet, the file should look like this:
+After adding the new snippet, the content of the file should look like this:
 ```
 console=serial0,115200 console=tty1 root=PARTUUID=e8af6eb2-02 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait quiet init=/usr/lib/raspi-config/init_resize.sh modules-load=dwc2,g_serial
 ```
