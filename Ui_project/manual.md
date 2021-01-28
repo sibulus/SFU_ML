@@ -46,7 +46,7 @@ More information on the `wpa_supplicant.conf` file can be found [here](https://w
 
 ### 1.1.3. Enable SSH Access
 
-To enable ssh, you will need to create an empty file in the **`boot`** folder called **`ssh`**. The file name should NOT have any extensions (e.g. ssh.txt)
+To enable ssh, you will need to create an empty file in the **`boot`** folder called **`ssh`**. The file name should NOT have any extensions (e.g. ssh.txt is not acceptable)
 
 ### 1.1.4. Enable Serial Gadget Driver
 As RPi Zero has one micro USB port. It is by default used to connect devices like a keyboard or a mouse through USB OTG. In our application, we want to use this usb port instead for serial communication with the computer. Accordingly, some settings need to be changed.
@@ -65,7 +65,7 @@ We need to enable loading of the serial USB gadget driver.
 
 In **`BOOT/cmdline.txt`**:
 
-Add `modules-load=dwc2,g_serial` to the kernel command line file, `cmdline.txt` in `boot. Note the `root=PARTUUID=xxxxxxxx-yy` part, don't modify that. You may need to power cycle it one more time after the first boot for the USB configuration to work.
+Add `modules-load=dwc2,g_serial` to the kernel command line file, `cmdline.txt` in `boot`. Note the `root=PARTUUID=xxxxxxxx-yy` part, don't modify that. You may need to power cycle it one more time after the first boot for the USB configuration to work.
 
 ## 1.2. Connect to your Board
 First of all, insert the prepared micro SD card to the RPi. Use the USB cable to connect the Raspberry Pi to your computer. Make sure to connect to the port labelled **USB** NOT the one labelled **PWR**. After a few minutes, the Raspberry Pi should be running and you will need to confirm two things:
