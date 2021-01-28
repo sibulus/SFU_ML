@@ -7,7 +7,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.neighbors import KNeighborsRegressor
 import numpy as np
 import zlib
-from subprocess import check_output
+from subprocess import check_output, CalledProcessError
 
 
 STARTING_BYTE = 0x01
@@ -108,6 +108,12 @@ class PiExecuter():
 
         elif command == "GET_IP":
             ackPayload = check_output(['hostname','-I']).decode('utf-8').split(" ")[0]
+            
+        elif command == "UPDATE_SCRIPT":
+            try:
+                ackPayload = check_output(['git','pull'], cwd='/home/pi/SFU_ML').decode('utf-8')
+            except CalledProcessError as e:
+                ackPayload = "FAILED: " + e.output()
 
         elif self.execState == ExecState.NotConnected:
             raise Exception("Wrong Exec State reached somehow: {}".format(self.execState))

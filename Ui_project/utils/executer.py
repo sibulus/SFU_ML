@@ -20,7 +20,7 @@ SERIAL_COMMAND_MAX_TRIALS = 3 #in number of trials
 
 # LOAD_MODEL is currently not used but is kept in case of implementing re-use of currently saved models in the future
 # SAVE_MODEL currently saves and loads the saved model on the 
-SERIAL_COMMANDS = ["RESET", "SELECT_LAB", "SAVE_MODEL", "LOAD_MODEL", "PROCESS", "PROCESSING_DONE", "GET_IP"]
+SERIAL_COMMANDS = ["RESET", "SELECT_LAB", "SAVE_MODEL", "LOAD_MODEL", "PROCESS", "PROCESSING_DONE", "GET_IP", "UPDATE_SCRIPT"]
 STARTING_BYTE = 0x01
 
 FAILURE_CODE = -1

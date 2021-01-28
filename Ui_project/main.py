@@ -98,6 +98,10 @@ class MainWindow(QMainWindow):
         self.actionGetRPiIP = QAction("Get RPi IP")
         self.utilitiesMenu.addAction(self.actionGetRPiIP)
         self.actionGetRPiIP.triggered.connect(self.handleActionGetRPiIPClicked)
+        self.actionUpdateRPiScript = QAction("Updare RPi Script")
+        self.utilitiesMenu.addAction(self.actionUpdateRPiScript)
+        self.actionUpdateRPiScript.triggered.connect(self.handleActionUpdateRPiScript)
+
         #create objects from the other classes
         self.logger = Logger(self.logTextBrowser, self.lastLogTextLabel)
 
@@ -373,6 +377,31 @@ class MainWindow(QMainWindow):
         ipAddrMessage.setIcon(QMessageBox.Information)
         ipAddrMessage.setStandardButtons(QMessageBox.Ok)
         ipAddrMessage.setWindowTitle("Raspberry Pi IP Address")
+        ipAddrMessage.setText(replyMessage)
+        ipAddrMessage.setTextFormat(Qt.RichText)
+        ipAddrMessage.setWindowIcon(self.appIcon)
+        ipAddrMessage.exec_()
+
+    def handleActionUpdateRPiScript(self):
+        self.logger.log('Attempting to "git pull" for the Raspberry Pi Python Script', type="INFO")
+        if not self.b_serialConnected:
+            replyMessage = "Serial is not connected, Please connect serial first"
+        else:
+            self.executer = Executer(serialObj=self.port, loggerObj=self.logger)
+            result = self.executer.executeOther("UPDATE_SCRIPT")
+            if result != ExecutionResult.FAILED and "FAIL" not in result:
+                replyMessage = "Raspberry Pi Script has been updated. You still need to reboot or power cycle the Raspberry Pi for the updated script to run" \
+                                    "\nReceived: " + result
+            else:
+                replyMessage = "Failed to update the RPi Script"
+                if "FAIL" in result:
+                    replyMessage = replyMessage + "\nReceived: " + result
+
+        self.logger.log(replyMessage)
+        ipAddrMessage = QMessageBox()
+        ipAddrMessage.setIcon(QMessageBox.Information)
+        ipAddrMessage.setStandardButtons(QMessageBox.Ok)
+        ipAddrMessage.setWindowTitle("Raspberry Pi Script Updating Status")
         ipAddrMessage.setText(replyMessage)
         ipAddrMessage.setTextFormat(Qt.RichText)
         ipAddrMessage.setWindowIcon(self.appIcon)
