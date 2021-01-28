@@ -127,7 +127,7 @@ Shell: sudo su – (if you want to be able to write to protected directories)
 ```
 su pi -c 'python3 /home/pi/SFU_ML/RPi_Script/main.py' &
 ```
-4. Save the file and exit. In nano, to exit, type Ctrl-x, and then Y.
+4. Save the file and exit. In nano, to exit, type Ctrl-x, then Y, and then press Enter.
 
 # 2. Set up and Run the GUI
 
