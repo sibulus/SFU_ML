@@ -46,7 +46,7 @@ More information on the `wpa_supplicant.conf` file can be found [here](https://w
 
 ### 1.1.3. Enable SSH Access
 
-To enable ssh, you will need to create an empty file in the **`boot`** folder called **`ssh`**
+To enable ssh, you will need to create an empty file in the **`boot`** folder called **`ssh`**. The file name should NOT have any extensions (e.g. ssh.txt)
 
 ### 1.1.4. Enable Serial Gadget Driver
 As RPi Zero has one micro USB port. It is by default used to connect devices like a keyboard or a mouse through USB OTG. In our application, we want to use this usb port instead for serial communication with the computer. Accordingly, some settings need to be changed.
