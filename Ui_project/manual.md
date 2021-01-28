@@ -40,6 +40,7 @@ network={
 }
 ```
 Note that some older wireless dongles don&#39;t support 5GHz networks.
+Make sure to change the `<placeholders>` with your actual WiFi SSDI/name and password. Keep the quotation marks only and remove the greater and less signs. This information is case-sensitive
 
 More information on the `wpa_supplicant.conf` file can be found [here](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md).
 
